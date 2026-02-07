@@ -18,6 +18,12 @@
             perspective: 1000px;
         }
         
+        @media (max-width: 768px) {
+            body {
+                overflow: auto;
+            }
+        }
+        
         /* 信封页面样式 */
         .envelope-container {
             width: 100vw;
@@ -177,6 +183,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .letter-container {
+                overflow-y: auto;
+                overflow-x: hidden;
+                display: block;
+                padding: 10px 0;
+            }
         }
         
         .letter-page {
@@ -373,35 +388,122 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .envelope {
-                width: 350px;
-                height: 220px;
+                width: 85vw;
+                height: 55vh;
+                min-width: 280px;
+                min-height: 200px;
+            }
+            
+            .envelope-text {
+                font-size: 14px;
+                bottom: 50px;
+            }
+            
+            .envelope-stamp {
+                width: 30px;
+                height: 35px;
+                font-size: 16px;
+                bottom: 10px;
+                right: 10px;
             }
             
             .letter-page {
-                padding: 40px;
-                margin: 20px;
+                padding: 20px 15px;
+                margin: 10px;
+                min-height: auto;
+                max-width: 100%;
+                width: calc(100% - 20px);
+                border-radius: 10px;
             }
             
             .letter-content-wrapper {
                 flex-direction: column;
-                gap: 20px;
+                gap: 15px;
+                width: 100%;
             }
             
             .letter-content-left,
             .letter-content-right {
                 width: 100%;
+                max-width: 100%;
+                align-items: center;
             }
             
             .letter-content {
-                font-size: 15px;
+                font-size: 14px;
                 line-height: 1.6;
+                max-width: 100%;
+                margin-bottom: 20px;
+                text-align: left;
+            }
+            
+            .letter-image,
+            .letter-video {
+                max-width: 100%;
+                margin-bottom: 15px;
+                border-radius: 10px;
+            }
+            
+            .letter-image img,
+            .letter-video video {
+                max-height: 40vh;
+                object-fit: contain;
+            }
+            
+            .next-button,
+            .prev-button {
+                padding: 12px 30px;
+                font-size: 14px;
+                bottom: 20px;
+                border-radius: 30px;
+            }
+            
+            .next-button {
+                right: 20px;
+            }
+            
+            .prev-button {
+                left: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .envelope {
+                width: 90vw;
+                height: 50vh;
+                min-width: 250px;
+                min-height: 180px;
+            }
+            
+            .letter-page {
+                padding: 15px 10px;
+                margin: 5px;
+                width: calc(100% - 10px);
+            }
+            
+            .letter-content {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            
+            .letter-image img,
+            .letter-video video {
+                max-height: 35vh;
             }
             
             .next-button,
             .prev-button {
                 padding: 10px 25px;
-                font-size: 14px;
-                bottom: 30px;
+                font-size: 13px;
+                bottom: 15px;
+            }
+            
+            .next-button {
+                right: 15px;
+            }
+            
+            .prev-button {
+                left: 15px;
             }
         }
     </style>
@@ -537,7 +639,8 @@
             
             // 显示信件页面并添加展开动画
             const letterContainer = document.getElementById('letterContainer');
-            letterContainer.style.display = 'flex';
+            const isMobile = window.innerWidth <= 768;
+            letterContainer.style.display = isMobile ? 'block' : 'flex';
             
             // 为第一页添加展开动画
             const firstPage = document.getElementById('page1');
