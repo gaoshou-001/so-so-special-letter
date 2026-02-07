@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给你的信</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f0f8f5;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        
+        /* 信封页面样式 */
+        .envelope-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f4f8 100%);
+            transition: all 1s ease;
+        }
+        
+        .envelope {
+            width: 60vw;
+            height: 45vh;
+            max-width: 600px;
+            max-height: 400px;
+            min-width: 350px;
+            min-height: 250px;
+            background: linear-gradient(135deg, #faf8f5 0%, #f5f3f0 100%);
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08), 0 3px 10px rgba(0,0,0,0.05);
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 12px;
+            border: 1px solid rgba(135, 206, 235, 0.4);
+            overflow: hidden;
+        }
+        
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(135deg, #f5f3f0 0%, #ebe9e6 100%);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 2;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .envelope:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 0 0 10px 10px;
+            z-index: 1;
+        }
+        
+        .envelope-flap-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(135, 206, 235, 0.6) 50%, transparent 100%);
+            z-index: 3;
+        }
+        
+        .envelope-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+            background-size: 8px 8px;
+            z-index: 4;
+            pointer-events: none;
+            border-radius: 12px;
+        }
+        
+        .envelope-bow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 30px;
+            z-index: 5;
+        }
+        
+        .envelope-bow:before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #fffaf0 0%, #f5f0e6 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(135, 206, 235, 0.2);
+            left: 10px;
+            top: 5px;
+        }
+        
+        .envelope-bow:after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #fffaf0 0%, #f5f0e6 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(135, 206, 235, 0.15);
+            left: 14px;
+            top: 9px;
+        }
+        
+        .envelope-stamp {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 35px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(135, 206, 235, 0.3) 0%, rgba(135, 206, 235, 0.2) 100%);
+            border: 1px solid rgba(135, 206, 235, 0.5);
+            border-radius: 4px;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: rgba(135, 206, 235, 0.6);
+            box-shadow: 0 2px 4px rgba(135, 206, 235, 0.1);
+        }
+        
+        .envelope:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .envelope-text {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #87ceeb;
+            font-size: 16px;
+            z-index: 6;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            letter-spacing: 1px;
+        }
+        
+        /* 信件页面样式 */
+        .letter-container {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #f0f8f5 0%, #e8f4f8 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .letter-page {
+            width: auto;
+            height: auto;
+            min-height: 700px;
+            padding: 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: 
+                linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px),
+                linear-gradient(135deg, #f8fbfa 0%, #e8f4f8 100%);
+            background-size: 20px 20px, 20px 20px, 100% 100%;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            max-width: 1200px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+        }
+        
+        .letter-content-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        
+        .letter-content-left {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .letter-content-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .letter-page.active {
+            display: flex;
+            opacity: 1;
+            transform: translateX(0) rotateY(0);
+        }
+        
+        .letter-page.next {
+            transform: translateX(100%) rotateY(-15deg);
+            opacity: 0;
+        }
+        
+        .letter-page.prev {
+            transform: translateX(-100%) rotateY(15deg);
+            opacity: 0;
+        }
+        
+        .letter-content {
+            max-width: 500px;
+            line-height: 1.8;
+            font-size: 17px;
+            color: #3a506b;
+            margin-bottom: 50px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            font-weight: 400;
+            text-align: left;
+        }
+        
+        .letter-image {
+            max-width: 500px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .letter-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .letter-video {
+            max-width: 500px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .letter-video video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .next-button,
+        .prev-button {
+            background: linear-gradient(135deg, #4ecdc4 0%, #45b7aa 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            bottom: 40px;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            font-weight: bold;
+        }
+        
+        .next-button {
+            right: 40px;
+        }
+        
+        .prev-button {
+            left: 40px;
+        }
+        
+        .next-button:hover,
+        .prev-button:hover {
+            background: linear-gradient(135deg, #45b7aa 0%, #3aa89f 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+        
+        /* 纸张展开动画 */
+        .paper-unfold {
+            animation: paperUnfold 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        @keyframes paperUnfold {
+            0% {
+                transform: scale(0.8) rotateY(-90deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05) rotateY(-10deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+        }
+        
+        /* 翻页动画 */
+        @keyframes pageTurnNext {
+            0% {
+                transform: translateX(0) rotateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-100%) rotateY(15deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pageTurnPrev {
+            0% {
+                transform: translateX(0) rotateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100%) rotateY(-15deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 音频元素 */
+        audio {
+            display: none;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .envelope {
+                width: 350px;
+                height: 220px;
+            }
+            
+            .letter-page {
+                padding: 40px;
+                margin: 20px;
+            }
+            
+            .letter-content-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .letter-content-left,
+            .letter-content-right {
+                width: 100%;
+            }
+            
+            .letter-content {
+                font-size: 15px;
+                line-height: 1.6;
+            }
+            
+            .next-button,
+            .prev-button {
+                padding: 10px 25px;
+                font-size: 14px;
+                bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 音频元素 -->
+    <audio id="bgm" loop>
+        <source src="1月23日.MP3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 信封页面 -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="envelope-flap-line"></div>
+            <div class="envelope-grid"></div>
+            <div class="envelope-bow"></div>
+            <div class="envelope-stamp">❤</div>
+            <div class="envelope-text">FOR YOU</div>
+        </div>
+    </div>
+    
+    <!-- 信件页面 -->
+    <div class="letter-container" id="letterContainer">
+        <!-- 第一页 -->
+        <div class="letter-page active" id="page1">
+            <div class="letter-content-wrapper">
+                <div class="letter-content-left">
+                    <div class="letter-image">
+                        <img src="MVIMG_20260206_225841.jpg" alt="图片1">
+                    </div>
+                </div>
+                <div class="letter-content-right">
+                    <div class="letter-content">
+                        <p>嘿蓉儿，见字如面，仔细想想我们总是莫名赌气，你的错怪也好我的误会也罢，我们总是因为往事种种斤斤计较，就像那天你突然的不开心，我也冲动，我最讨厌我的冲动，总是深思熟虑的做荒唐决策，我该解释的，我也该好好讲的，你说得对，我的态度没跟上，归根结底是我的错，人生那么多遗憾，我怎么能如此，徒增伤悲，明明我们可以好好的，如果当年我们坚持走下去我们该是多好的彼此，谁都羡慕不来，这么多年都走过来，肯定是铁打的不能被分离，你和我有那么多美好，那么多瞬间我犹如历历在目，你还记得不，高中的时候，我早上老是起不来，阳总是给我带早餐，你知道吗，我总是会分一半出来给你，当时真喜欢也真爱，我就想对你好，一直对你好，也谢谢你的接受，我开心，我也记得那个时候我们都天天都聊天，如今明白我们都希望微弱的文字能藏下愿意留住彼此的温度，这往日种种都是我们花心思的经营，是种花也是浇树，这回忆就像一个盒子，白天扣上了盖，晚上又因为思念打开，我一直想着听到故事给你讲，那是或许是朋友，爷爷奶奶讲给我听的，我每听一个有趣的故事，我就想着记下来留着给你讲，记得你送我的花，是我这辈子唯一收到的花，可能也只有你送了吧，那是一捧我喜欢的绿色，它一直在，不会枯萎，也记得你送我的熊，绒绒的毛，可可爱爱我一直好生保管，它一直陪着我，还有那个小帆船好玩得很，一直在我身边就放在我宿舍的书柜上，我太爱玩它了，生不得一点灰。</p>
+                    </div>
+                </div>
+            </div>
+            <button class="next-button" onclick="nextPage()">&gt;</button>
+        </div>
+        
+        <!-- 第二页 -->
+        <div class="letter-page" id="page2">
+            <div class="letter-content-wrapper">
+                <div class="letter-content-left">
+                    <div class="letter-image">
+                        <img src="MVIMG_20260206_225959.jpg" alt="图片2">
+                    </div>
+                </div>
+                <div class="letter-content-right">
+                    <div class="letter-content">
+                        <p>如今回首就是我自负啊，你越是对我好我就越想有点什么成就，有点什么出息，我想向所有人证明我够格，我有资格得配你的爱，可惜了，路走乱了，也走远了，我总想着，等我怎么怎么样，等我出息了，等我成就了，可惜可惜，蓦然回首，那人却在，灯火阑珊处，等待成了遗憾，我不止一个夜里后悔，不止一个夜里冲动，你的电话从来没存过，但我从来没忘记，好几次想拨通，都在想我有这个脸去见你吗，我比赛打了一场又一场，仿佛忙起来了才能忘却这些，仿佛我就是要失去这些才能拥有那些，我从始至终都错了，一个女孩的爱，一个女孩的认真，辜负了就是混蛋，那时候的我自负，总是欲求不满，我盯着前程，仿佛都忘记自己的初衷，那仅仅是要一个成就来证明我，证明我配得上你的爱，好像我也好多没做到，我让你掉泪了，让你伤心了，这些年我终于读懂了你的眼睛，记得那时总是要向你索取，要你一个口头的承认，承认我们之间的关系，想着你当时的承认，我死也不会放开你的手，可是，你爱我不是用实际证明了嘛，我总在挑刺，读不懂你的顾虑，是我错了，难辞其咎，要我一辈子来还我也愿意，是孤独终老还是突然暴毙，对我来说仅仅是咎由自取，我不会再遇见第二个能如此对我的了，一直明白。</p>
+                    </div>
+                </div>
+            </div>
+            <button class="prev-button" onclick="prevPage()">&lt;</button>
+            <button class="next-button" onclick="nextPage()">&gt;</button>
+        </div>
+        
+        <!-- 第三页 -->
+        <div class="letter-page" id="page3">
+            <div class="letter-content-wrapper">
+                <div class="letter-content-left">
+                    <div class="letter-image">
+                        <img src="MVIMG_20260206_230119.jpg" alt="图片3">
+                    </div>
+                </div>
+                <div class="letter-content-right">
+                    <div class="letter-content">
+                        <p>如今，我向你做出解释，那天我带的那束玫瑰是我在广职院后门唯一花店买的，老板问我买给谁的，是女朋友吗？当然这个时候我确实不配，我想，我也该送你一束花，我这个人情商就是不够用，教别人一套一套的，真到自己头上了又胡来，可能这里惹你不开心了，我诚恳的致歉，是我欠缺考虑，然后你说的我背着我女朋友什么的，事实不是这样，没有什么女朋友，虽然但是我应该好好和你说的，说明白不是你想的那样，是打消顾虑也好，反正我不该默不作声，当时我确实有点哈搓搓了，我害怕我的跌倒兔已经被你丢弃，我真心喜欢的东西，别人碰一下我都不愿意的，我喜欢，我想送给你，还是怀疑滋生怀疑，依旧算归为我的错，我该好好对你说的话作出回应以及解释，我有太多问题，总是拿沉默回应了太多问题，可能都算到了我头上，当然，难辞其咎，我反思，改变，并积赞勇气，我还是想和你说说话，这不是一个问题，你不用回答，我想和你说，也想你知道，我此后再也不默不作声，还有还有，好多事你有想问的，不妨问我，我会和你好好说，也想和你好好说。</p>
+                    </div>
+                </div>
+            </div>
+            <button class="prev-button" onclick="prevPage()">&lt;</button>
+            <button class="next-button" onclick="nextPage()">&gt;</button>
+        </div>
+        
+        <!-- 第四页 -->
+        <div class="letter-page" id="page4">
+            <div class="letter-content-wrapper">
+                <div class="letter-content-left">
+                    <div class="letter-image">
+                        <img src="MVIMG_20260206_230259.jpg" alt="图片4">
+                    </div>
+                </div>
+                <div class="letter-content-right">
+                    <div class="letter-content">
+                        <p>回去之后我一直在找事做，总想着不能就干干的蹉跎时光，或许或许哪一天我们还要相见，我想我得好一点，再见见你，现在我有我想说的，你如曾经一样，我依然动容，太多太多我没写完也没写清，想有以后和你好好说。</p>
+                        <p>我跟你说，我寒假在挣钱了，如果如果，有如果，我想对你好，此话当真。</p>
+                    </div>
+                </div>
+            </div>
+            <button class="prev-button" onclick="prevPage()">&lt;</button>
+            <button class="next-button" onclick="nextPage()">&gt;</button>
+        </div>
+        
+        <!-- 第五页 -->
+        <div class="letter-page" id="page5">
+            <div class="letter-content-wrapper">
+                <div class="letter-content-left">
+                    <div class="letter-image">
+                        <img src="MVIMG_20260206_230702.jpg" alt="图片5">
+                    </div>
+                </div>
+                <div class="letter-content-right">
+                    <div class="letter-video">
+                        <video id="page5Video" muted playsinline loop>
+                            <source src="VID_20251204_113352.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+            <button class="prev-button" onclick="prevPage()">&lt;</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentPage = 1;
+        const totalPages = 5;
+        
+        // 触摸滑动变量
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let isAnimating = false;
+        
+        // 点击信封事件
+        document.getElementById('envelope').addEventListener('click', function() {
+            // 播放BGM
+            const bgm = document.getElementById('bgm');
+            bgm.play();
+            
+            // 隐藏信封页面
+            document.getElementById('envelopeContainer').style.display = 'none';
+            
+            // 显示信件页面并添加展开动画
+            const letterContainer = document.getElementById('letterContainer');
+            letterContainer.style.display = 'flex';
+            
+            // 为第一页添加展开动画
+            const firstPage = document.getElementById('page1');
+            firstPage.classList.add('paper-unfold');
+        });
+        
+        // 触摸开始事件
+        document.getElementById('letterContainer').addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        // 触摸结束事件
+        document.getElementById('letterContainer').addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        // 处理滑动
+        function handleSwipe() {
+            if (isAnimating) return;
+            
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                isAnimating = true;
+                setTimeout(function() {
+                    isAnimating = false;
+                }, 600);
+                
+                if (diff > 0) {
+                    // 向左滑动，下一页
+                    nextPage();
+                } else {
+                    // 向右滑动，上一页
+                    prevPage();
+                }
+            }
+        }
+        
+        // 下一页函数
+        function nextPage() {
+            if (currentPage < totalPages && !isAnimating) {
+                isAnimating = true;
+                const currentPageElement = document.getElementById('page' + currentPage);
+                const nextPageElement = document.getElementById('page' + (currentPage + 1));
+                
+                // 为当前页添加翻页动画
+                currentPageElement.style.animation = 'pageTurnNext 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+                
+                // 显示下一页并添加动画
+                nextPageElement.style.display = 'flex';
+                nextPageElement.style.transform = 'translateX(100%) rotateY(-15deg)';
+                nextPageElement.style.opacity = '0';
+                
+                // 延迟后更新页面状态
+                setTimeout(() => {
+                    currentPageElement.classList.remove('active');
+                    currentPageElement.style.animation = '';
+                    currentPageElement.style.display = 'none';
+                    
+                    currentPage++;
+                    nextPageElement.classList.add('active');
+                    nextPageElement.style.transform = 'translateX(0) rotateY(0)';
+                    nextPageElement.style.opacity = '1';
+                    
+                    // 如果翻到第五页，播放视频
+                    if (currentPage === 5) {
+                        const video = document.getElementById('page5Video');
+                        if (video) {
+                            video.play();
+                        }
+                    }
+                    
+                    setTimeout(() => {
+                        isAnimating = false;
+                    }, 300);
+                }, 300);
+            }
+        }
+        
+        // 上一页函数
+        function prevPage() {
+            if (currentPage > 1 && !isAnimating) {
+                isAnimating = true;
+                const currentPageElement = document.getElementById('page' + currentPage);
+                const prevPageElement = document.getElementById('page' + (currentPage - 1));
+                
+                // 如果当前是第五页，暂停视频
+                if (currentPage === 5) {
+                    const video = document.getElementById('page5Video');
+                    if (video) {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                }
+                
+                // 为当前页添加翻页动画
+                currentPageElement.style.animation = 'pageTurnPrev 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+                
+                // 显示上一页并添加动画
+                prevPageElement.style.display = 'flex';
+                prevPageElement.style.transform = 'translateX(-100%) rotateY(15deg)';
+                prevPageElement.style.opacity = '0';
+                
+                // 延迟后更新页面状态
+                setTimeout(() => {
+                    currentPageElement.classList.remove('active');
+                    currentPageElement.style.animation = '';
+                    currentPageElement.style.display = 'none';
+                    
+                    currentPage--;
+                    prevPageElement.classList.add('active');
+                    prevPageElement.style.transform = 'translateX(0) rotateY(0)';
+                    prevPageElement.style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        isAnimating = false;
+                    }, 300);
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
