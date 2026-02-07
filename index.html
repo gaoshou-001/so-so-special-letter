@@ -292,9 +292,9 @@
         
         .next-button,
         .prev-button {
-            background: linear-gradient(135deg, #4ecdc4 0%, #45b7aa 100%);
-            color: white;
-            border: none;
+            background: transparent;
+            color: #4ecdc4;
+            border: 2px solid #4ecdc4;
             padding: 15px 50px;
             font-size: 18px;
             border-radius: 40px;
@@ -302,8 +302,7 @@
             transition: all 0.3s ease;
             position: absolute;
             bottom: 40px;
-            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: none;
             font-weight: bold;
         }
         
@@ -317,9 +316,9 @@
         
         .next-button:hover,
         .prev-button:hover {
-            background: linear-gradient(135deg, #45b7aa 0%, #3aa89f 100%);
+            background: rgba(78, 205, 196, 0.1);
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.2);
         }
         
         /* 纸张展开动画 */
@@ -430,7 +429,7 @@
             <div class="letter-content-wrapper">
                 <div class="letter-content-left">
                     <div class="letter-image">
-                        <img src="https://img.naixiai.cn/2026/02/07/MVIMG_20260206_225841.jpg" alt="图片1">
+                        <img src="MVIMG_20260206_225841.jpg" alt="图片1">
                     </div>
                 </div>
                 <div class="letter-content-right">
@@ -447,7 +446,7 @@
             <div class="letter-content-wrapper">
                 <div class="letter-content-left">
                     <div class="letter-image">
-                        <img src="https://img.naixiai.cn/2026/02/07/MVIMG_20260206_225959.jpg" alt="图片2">
+                        <img src="MVIMG_20260206_225959.jpg" alt="图片2">
                     </div>
                 </div>
                 <div class="letter-content-right">
@@ -465,7 +464,7 @@
             <div class="letter-content-wrapper">
                 <div class="letter-content-left">
                     <div class="letter-image">
-                        <img src="https://img.naixiai.cn/2026/02/07/MVIMG_20260206_230119.jpg" alt="图片3">
+                        <img src="MVIMG_20260206_230119.jpg" alt="图片3">
                     </div>
                 </div>
                 <div class="letter-content-right">
@@ -483,7 +482,7 @@
             <div class="letter-content-wrapper">
                 <div class="letter-content-left">
                     <div class="letter-image">
-                        <img src="https://img.naixiai.cn/2026/02/07/MVIMG_20260206_230259.jpg" alt="图片4">
+                        <img src="MVIMG_20260206_230259.jpg" alt="图片4">
                     </div>
                 </div>
                 <div class="letter-content-right">
@@ -502,13 +501,13 @@
             <div class="letter-content-wrapper">
                 <div class="letter-content-left">
                     <div class="letter-image">
-                        <img src="https://img.naixiai.cn/2026/02/07/MVIMG_20260206_230702.jpg" alt="图片5">
+                        <img src="MVIMG_20260206_230702.jpg" alt="图片5">
                     </div>
                 </div>
                 <div class="letter-content-right">
                     <div class="letter-video">
                         <video id="page5Video" muted playsinline loop>
-                            <source src="https://img.naixiai.cn/2026/02/07/27-1.mp4" type="video/mp4">
+                            <source src="VID_20251204_113352.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -662,5 +661,4 @@
         }
     </script>
 </body>
-
 </html>
